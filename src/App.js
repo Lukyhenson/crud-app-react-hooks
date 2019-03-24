@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import AddUserForm from './components/forms/AddUserForm'
 import EditUserForm from './components/forms/EditUserForm';
 import UserTable from './components/tables/UserTable'
+import isEmpty from 'lodash/isEmpty';
 
 const App = () => {
   const usersData = [
@@ -15,13 +16,19 @@ const App = () => {
   
   const [users, setUsers] = useState(usersData)
   
-  const [editing, setEditing] = useState(false)
+  const [isEdtiMode, setEditing] = useState(false)
 
   const [currentUser, setCurrentUser] = useState(initialFormState)
 
   const addUser = user => {
     user.id = users.length + 1
-    setUsers([...users, user])
+    let isUserUnregisterd = usersData.filter(users => user.username === users.username);
+
+    if(isEmpty(isUserUnregisterd)) {
+      setUsers([...users, user])
+    } else {
+      alert("You can't save that user!")
+    }
   }
 
   const editUser = user => {
@@ -47,11 +54,15 @@ const App = () => {
       <div className="flex-row">
         <div className="flex-large">
           {
-            editing ? (
+            isEdtiMode && (
               <div>
-                <EditUserForm editing={editing} setEditing={setEditing} currentUser={currentUser} updateUser={updateUser}/>
+                <EditUserForm editing={isEdtiMode} setEditing={setEditing} currentUser={currentUser} updateUser={updateUser}/>
               </div>
-            ) : (
+            )
+          }
+            
+          {
+            !isEdtiMode && (
               <div>
                 <h2>Add user</h2>
                 <hr/>
